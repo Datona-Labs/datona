@@ -1,11 +1,18 @@
 {
-  "name": "datona",
-  "version": "0.0.1",
+  "name": "datona-cli",
+  "version": "0.0.2",
   "description": "*nix command line interface for datona-lib. Designed for developers to experiment with Smart Data Access",
-  "main": "src/index.js",
+  "main": "./src/index.js",
   "bin": {
-    "datona": "src/index.js"
+    "datona": "./src/index.js"
   },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "src/",
+    "contracts/",
+    "config.json"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

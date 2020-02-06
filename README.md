@@ -1,12 +1,14 @@
 # Datona CLI (datona)
 
-Datona Command Line Interface.  A node.js wrapper for the [datona-lib](https://github.com/Datona-Labs/datona-lib) library providing developers with *nix command line functions to experiment with the [Datona IO Platform](https://datona.io).  Full documentation for datona-lib can be found [here](https://datona-lib.readthedocs.io/en/latest/index.html).
+[![NPM](https://img.shields.io/npm/v/bitcoinjs-lib.svg)](https://www.npmjs.org/package/bitcoinjs-lib)
+
+Datona Command Line Interface.  A node.js wrapper for the [datona-lib](https://github.com/Datona-Labs/datona-lib) library providing developers with command line functions to experiment with the [Datona IO Platform](https://datona.io).  Full documentation for datona-lib can be found [here](https://datona-lib.readthedocs.io/en/latest/index.html).
 
 ## Features
 - create and manage a basic wallet of private keys;
 - get [Smart Data Access Requests](https://datona-lib.readthedocs.io/en/latest/types.html#smart-data-access-request-protocol) from public restful APIs and generate [Smart Data Access Responses](https://datona-lib.readthedocs.io/en/latest/types.html#smartdataaccessresponse).
-- deploy and manage [Smart Data Access Contracts](https://datona-lib.readthedocs.io/en/latest/what.html#smart-data-access-contracts) on the blockchain;
-- create, update, access and delete [Data Vaults](https://datona-lib.readthedocs.io/en/latest/what.html#how-does-it-work) on local or remote [vault servers](https://datona-lib.readthedocs.io/en/latest/howto.html#vault-service-providers);
+- deploy and manage Smart Data Access Contracts on the blockchain;
+- create, update, access and delete Data Vaults on local or remote vault servers;
 
 Datona is built using [datona-lib](https://github.com/datona-labs/datona-lib).
 
@@ -22,7 +24,7 @@ Download the recommended version from [nodejs.org](https://nodejs.org/en/) and i
 ### Install Datona
 Open a command prompt then type:
 ```
-npm install datona-cli -g
+npm install datona -g
 ```
 This will install the Datona command line client and all its dependencies.
 
@@ -66,95 +68,79 @@ To use the kovan testnet you will need to use a faucet to fund your address with
 ```
 Usage: datona <command> [options] [args]   # Try datona <command> --help
 
-Options:
-  -V, --version   output the version number
-  -h, --help      output usage information
 
 Commands:
 
-  generateKey [options] [name]
+  generateKey [options] [name]                                           
     generates a new private key and stores it in the ~/.datona directory with the optional name.
 
-  saveKey [options] <privateKey> [name]
+  saveKey [options] <privateKey> [name]                                  
     stores the given private key in the ~/.datona directory with the optional name.
 
-  getAddress [name]
+  getAddress [name]                                                      
     displays the public address of the key with the given name. If no name is given the default key is used.
 
-  getRequest [options] <url>
+  getRequest [options] <url>                                             
     gets a request from the given http restful api
 
-  acceptRequest [options] <file> <contractAddr> <vaultUrl> <vaultAddr>
+  acceptRequest [options] <file> <contractAddr> <vaultAddr> <vaultUrl>   
     accepts the given request by sending a Smart Data Access Response to the requester.
 
-  deployContract [options] <file> <args...>
+  deployContract [options] <file> <args...>                              
     deploys a contract to the blockchain with the given constru tor args and returns the contract address
 
-  callContract <file> <contractAddr> <method> [args...]
+  callContract <file> <contractAddr> <method> [args...]                  
     calls a specific view or pure method of the given contract at the given address
 
-  transactContract [options] <file> <contractAddr> <function> [args...]
+  transactContract [options] <file> <contractAddr> <function> [args...]  
     calls a specific state-modifying method of the given contract at the given address
 
-  terminateContract [options] <file> <contractAddr>
+  terminateContract [options] <file> <contractAddr>                      
     terminates the given contract at the given address
 
-  createVault [options] <contractAddr> <vaultUrl> <vaultAddr> <data>
+  createVault [options] <vaultUrl> <contractAddr> <remoteAddr> <data>    
     creates a vault containing the given data, on a remote vault server controlled by the given contract
 
-  updateVault [options] <contractAddr> <vaultUrl> <vaultAddr> <data>
+  updateVault [options] <vaultUrl> <contractAddr> <remoteAddr> <data>    
     creates a vault containing the given data, on a remote vault server controlled by the given contract
 
-  accessVault [options] <contractAddr> <vaultUrl> <vaultAddr>
+  accessVault [options] <vaultUrl> <contractAddr> <remoteAddr>           
     creates a vault containing the given data, on a remote vault server controlled by the given contract
 
-  deleteVault [options] <contractAddr> <vaultUrl> <vaultAddr>
+  deleteVault [options] <vaultUrl> <contractAddr> <remoteAddr>           
     creates a vault containing the given data, on a remote vault server controlled by the given contract
 
+Options:
+
+  -h, --help     output usage information
+  -V, --version  output the version number
+  -k --key       name of the private key to use (see datona generateKey --help)
 ```
 
 ## Example
 
 This example follows the following scenario:
 
-
 **As a Data Owner, receive and accept a Smart Data Access Request:**
-
-1\. Download a Smart Data Access Request from Datona Labs;
-
-2\. Deploy the requested [Duration_SDAC](#Duration_SDAC-Solidity-Code) smart contract to the kovan testnet;
-
-3\. Create a new data vault on the datonavault.com cloud vault server;
-
-4\. Inform Datona Labs that you've accepted the request;
-
+1. Download a Smart Data Access Request from Datona Labs;
+2. Deploy the requested [Duration_SDAC](#Duration_SDAC-Solidity-Code) smart contract to the kovan testnet;
+3. Create a new data vault on the datonavault.com cloud vault server;
+4. Inform Datona Labs that you've accepted the request;
 
 **Explore vault permissions:**
-
-5\. As the Requester, retrieve the data from the vault;
-
-6\. As a different user, try to retrieve the data from the vault;
-
-7\. As the Owner, update the data in the vault;
-
-8\. As the Requester, retrieve the updated data from the vault;
-
-9\. Get information about the Smart Data Access Contract;
-
+5. As the Requester, retrieve the data from the vault;
+6. As a different user, try to retrieve the data from the vault;
+7. As the Owner, update the data in the vault;
+8. As the Requester, retrieve the updated data from the vault;
+9. As any user, get information about the Smart Data Access Contract;
 
 **Terminate the contract and explore permissions:**
-
-10\. As a different user, try to terminate the Smart Data Access Contract
-
-11\. As the Requester, retrieve the data from the vault;
-
-12\. As the Owner, terminate the Smart Data Access Contract
-
-13\. As the Requester, try to retrieve the data from the vault;
-
-14\. As the Owner, try to retrieve the data from the vault;
-
-15\. As the Owner, delete the vault.
+10. As a different user, try to terminate the Smart Data Access Contract
+11. As the Requester, retrieve the data from the vault;
+12. As the Owner, terminate the Smart Data Access Contract
+13. As the Requester, try to retrieve the data from the vault;
+14. As the Owner, try to retrieve the data from the vault;
+15. As the Owner, delete the vault.
 
 
 ### First, let's setup some keys...
@@ -183,7 +169,7 @@ The Owner's identity doesn't matter since the Smart Data Access Request is for a
 
 ### Fund the keys
 
-You will need to send some of your KETH from your funded address to the owner, requester and otherUser addresses.  Any Ethereum wallet should be able to do this, e.g. [MetaMask](https://metamask.io/).
+You will need to send some of your KETH from your funded address to the owner, requester and otherUser addresses.  Any Ethereum wallet should be able to do this.
 
 ### 1. Download a Smart Data Access Request from Datona Labs
 
@@ -193,22 +179,32 @@ To save copying the JSON request to a file, the second method uses the --raw opt
 
 ```
 > datona getRequest http://datonavault.com:8125/0.0.1/durationRequest
-request: request: {"txn":{"txnType":"SmartDataAccessRequest","version":"0.0.1","contract":{"hash":"5573012304cc4d87a7a07253c728e08250db6821a3dfdbbbcac9a24f8cd89ad4"},"api":{"url":{"scheme":"file","host":"77.68.75.133","port":8126},"acceptTransaction":{},"rejectTransaction":{}}},"signature":"93f05cbe7fce54df6195bbc1cbb7bc8bb0b11db699fdcfb3c1630d5bcf38ec961a5479534c6fc09537f65b022db36403cad6dac2108a12305c0cfe6a9f9c5a6801"}
+request: {"txn":{"txnType":"SmartDataAccessRequest","version":"0.0.1","contract":{"hash":"5573012304cc4d87a7a07253c728e08250db6821a3dfdbbbcac9a24f8cd89ad4"},"api":{"url":{"scheme":"file","host":"77.68.75.133","port":8124},"acceptTransaction":{},"rejectTransaction":{}}},"signature":"69f8e9958f953b3139b0e5ee248d878fb3bc101616bb932ec2ffc4481e61cd68410010d7c3f245457893934cd6b9aabe2b93f7326a55c3052dd306c53b95675000"}
 signatory: 0x288b32f2653c1d72043d240a7f938a114ab69584
 
 > datona getRequest http://datonavault.com:8125/0.0.1/durationRequest --raw >request
 
 ```
 
+The contract hash in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants you to accept and under which your data will be shared. In this case it is the Duration_SDAC smart contract. (The contract source code [can be found below](#duration_sdac-solidity-code)).
+
 ### 2. Deploy the requested Duration_SDAC smart contract to the kovan testnet
 
-First we will create a variable pointing to the Duration_SDAC contract abi and bytecode file to make it easier later.  The contract's file is named after the hash of it's runtime bytecode, as requested in the Smart Data Access Request above.
+First we need the Duration_SDAC abi and bytecode. This can be found in datona-cli's ``contracts`` directory or can be downloaded from datonavault.com.  Either way, let's create a variable pointing to it to make it easier later.  E.g.
+
+```
+> contractCode=/usr/local/lib/node_modules/datona-cli/contracts/5573012304cc4d87a7a07253c728e08250db6821a3dfdbbbcac9a24f8cd89ad4
+```
+or
+```
+> curl http://datonavault.com:8125/0.0.1/contract/5573012304cc4d87a7a07253c728e08250db6821a3dfdbbbcac9a24f8cd89ad4 > duration_sdac
+
+> contractCode=duration_sdac
+```
 
 Then we will deploy a new instance of the contract on the blockchain.  The contract's constructor takes two parameters: permittedRequester and contractDuration (in days)
 
 ```
-> contractCode=./node_modules/datona-lib/contracts/5573012304cc4d87a7a07253c728e08250db6821a3dfdbbbcac9a24f8cd89ad4
-
 > datona deployContract $contractCode $requester 1 --key owner
 0x073C8e6121eF67096c7925f7f9b2C66e3d240a74
 ```
@@ -234,7 +230,7 @@ First, let's setup some variables to hold the vault url and the vault's public a
 Now create the vault.
 
 ```
-> datona createVault $contract $vaultUrl $vaultOwner "Hello World" --key owner
+> datona createVault $vaultUrl $contract $vaultOwner "Hello World!" --key owner
 {
   txn: {
     txnType: 'VaultResponse',
@@ -257,7 +253,11 @@ Behind the scenes the vault server received the create request, checked that the
 Now that the contract has been deployed and the vault created the owner needs to inform the requester of the contract address and where the data is held by sending a Smart Data Access Response.
 
 ```
-> datona acceptRequest request $contract $vaultUrl $vaultOwner --key owner
+> datona acceptRequest request $contract $vaultOwner $vaultUrl --key owner
+{
+  txn: { txnType: 'GeneralResponse', responseType: 'success' },
+  signatory: '0x288b32f2653c1d72043d240a7f938a114ab69584'
+}
 ```
 
 The request contains the url of the requester's server so datona-lib knows where to send the response.
@@ -267,8 +267,8 @@ Behind the scenes the requester's server received the Smart Data Access Response
 ### 5. As the Requester, retrieve the data from the vault
 
 ```
-> datona accessVault $contract $vaultUrl $vaultOwner --key requester
-Hello World
+> datona access $vaultUrl $contract $vaultOwner --key requester
+Hello World!
 ```
 
 Behind the scenes datona-lib sent a *VaultRequest* transaction to the vault server signed by the requester's private key.  The vault server authenticated the signature in the VaultRequest and called the ``isPermitted`` method of the contract with the signatory recovered from the signature. This returned ``true`` so the vault server sent a *success VaultResponse* back with a copy of the data from the vault.
@@ -276,7 +276,7 @@ Behind the scenes datona-lib sent a *VaultRequest* transaction to the vault serv
 ### 6. As a different user, try to retrieve the data from the vault
 
 ```
-> datona accessVault $contract $vaultUrl $vaultOwner --key otherUser
+> datona access $vaultUrl $contract $vaultOwner --key otherUser
 PermissionError - permission denied
 ```
 
@@ -285,16 +285,9 @@ The call to ``isPermitted`` for this user This returned ``false`` so the vault s
 ### 7. As the Owner, update the data in the vault;
 
 ```
-> datona updateVault $contract $vaultUrl $vaultOwner "Hi World" --key owner
+> datona createVault $vaultUrl $contract $vaultOwner "Hi World!" --key owner
 {
-  txn: {
-    txnType: 'VaultResponse',
-    responseType: 'success',
-    data: {
-      message: 'successfully updated vault for contract 0x073C8e6121eF67096c7925f7f9b2C66e3d240a74',
-      data: ''
-    }
-  },
+  txn: { txnType: 'VaultResponse', responseType: 'success' },
   signatory: '0x288b32f2653c1d72043d240a7f938a114ab69584'
 }
 ```
@@ -304,22 +297,22 @@ At this time the vault owner is free to update the data in the vault at any time
 ### 8. As the Requester, retrieve the updated data from the vault
 
 ```
-> datona accessVault $contract $vaultUrl $vaultOwner --key requester
-Hi World
+> datona access $vaultUrl $contract $vaultOwner --key requester
+Hi World!
 ```
 
-### 9. Get information about the Smart Data Access Contract;
+### 9. As any user, get information about the Smart Data Access Contract;
 
 The smart contract developer controls who can access what methods of the Smart Data Access Contract.  In the case of the Duration_SDAC, all the ``view`` methods are unrestricted.
 
 ```
-> datona callContract $contractCode $contract isPermitted $requester
+> datona callContract $contractCode $contract isPermitted $requester --key otherUser
 true
 
-> datona callContract $contractCode $contract hasExpired
+> datona callContract $contractCode $contract hasExpired --key otherUser
 false
 
-> datona callContract $contractCode $contract getOwner
+> datona callContract $contractCode $contract getOwner --key otherUser
 0xc16a409a39ede3f38e212900f8d3afe6aa6a8929
 ```
 
@@ -328,18 +321,14 @@ false
 ```
 > datona terminateContract $contractCode $contract --key otherUser
 BlockchainError - Transaction has been reverted by the EVM:
-{
-  ...
-  status: false,
-  ...
-}
+...
 ```
 
 ### 11. As the Requester, retrieve the data from the vault
 
 ```
-> datona accessVault $contract $vaultUrl $vaultOwner --key requester
-Hi World
+> datona access $vaultUrl $contract $vaultOwner --key requester
+Hi World!
 ```
 
 ### 12. As the Owner, terminate the Smart Data Access Contract
@@ -360,14 +349,14 @@ Note, the vault and its data will still exist until the vault server gets round 
 ### 13. As the Requester, try to retrieve the data from the vault
 
 ```
-> datona accessVault $contract $vaultUrl $vaultOwner --key requester
+> datona access $vaultUrl $contract $vaultOwner --key requester
 PermissionError - permission denied
 ```
 
 ### 14. As the Owner, try to retrieve the data from the vault
 
 ```
-> datona accessVault $contract $vaultUrl $vaultOwner --key owner
+> datona access $vaultUrl $contract $vaultOwner --key owner
 PermissionError - permission denied
 ```
 
@@ -376,7 +365,7 @@ PermissionError - permission denied
 This forces the vault server to delete the vault and its data immediately.  It is not necessary to do this - the vault server will get round to it soon enough and the data cannot be accessed because the contract has been terminated.
 
 ```
-> datona deleteVault $contract $vaultUrl $vaultOwner --key owner
+> datona deleteVault $vaultUrl $contract $vaultOwner --key owner
 {
   txn: { txnType: 'VaultResponse', responseType: 'success' },
   signatory: '0x288b32f2653c1d72043d240a7f938a114ab69584'
