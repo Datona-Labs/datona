@@ -186,7 +186,7 @@ signatory: 0x288b32f2653c1d72043d240a7f938a114ab69584
 
 ```
 
-The contract hash in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants you to accept and under which your data will be shared. In this case it is the Duration_SDAC smart contract. (The contract source code [can be found below](#duration_sdac-solidity-code)).
+The contract hash in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants the owner to accept and under which the owner's data will be shared. In this case it is the Duration_SDAC smart contract. (The contract source code [can be found below](#duration_sdac-solidity-code)).
 
 ### 2. Deploy the requested Duration_SDAC smart contract to the kovan testnet
 
