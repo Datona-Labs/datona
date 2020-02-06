@@ -107,7 +107,7 @@ program
 // DEPLOYCONTRACT Command
 program
 	.command('deployContract <file> <args...>')
-	.description('deploys a contract to the blockchain with the given constru tor args and returns the contract address')
+	.description('deploys a contract to the blockchain with the given constructor args')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(file, args, options){
 		const contractSourceCode = loadContract(file);
@@ -122,7 +122,7 @@ program
 // CALLCONTRACT Command
 program
 	.command('callContract <file> <contractAddr> <method> [args...]')
-	.description('calls a specific view or pure method of the given contract at the given address ')
+	.description('calls a specific view or pure method of a contract')
 	.action(function(file, contractAddress, method, args, options){
 		const contractSourceCode = loadContract(file);
 		assert.isAddress(contractAddress, "Invalid contract address");
@@ -136,7 +136,7 @@ program
 // TRANSACTCONTRACT Command
 program
 	.command('transactContract <file> <contractAddr> <function> [args...]')
-	.description('calls a specific state-modifying method of the given contract at the given address ')
+	.description('calls a specific state-modifying method of a contract')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(file, contractAddress, functionName, args, options){
 		const contractSourceCode = loadContract(file);
@@ -152,7 +152,7 @@ program
 // TERMINATECONTRACT Command
 program
 	.command('terminateContract <file> <contractAddr>')
-	.description('terminates the given contract at the given address ')
+	.description('terminates the contract at the given address ')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(file, contractAddress, options){
 		const contractSourceCode = loadContract(file);
@@ -168,7 +168,7 @@ program
 // CREATEVAULT Command
 program
 	.command('createVault <contractAddr> <vaultUrl> <vaultAddr> <data>')
-	.description('creates a vault containing the given data, on a remote vault server controlled by the given contract')
+	.description('creates a vault on the remote vault server controlled by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(contractAddress, vaultUrlStr, remoteAddress, data, options){
 		vaultCommand("create", vaultUrlStr, contractAddress, remoteAddress, data, options);
@@ -178,7 +178,7 @@ program
 // UPDATEVAULT Command
 program
 	.command('updateVault <contractAddr> <vaultUrl> <vaultAddr> <data>')
-	.description('creates a vault containing the given data, on a remote vault server controlled by the given contract')
+	.description('updates a vault on the remote vault server identified by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(contractAddress, vaultUrlStr, remoteAddress, data, options){
 		vaultCommand("update", vaultUrlStr, contractAddress, remoteAddress, data, options);
@@ -188,7 +188,7 @@ program
 // ACCESSVAULT Command
 program
 	.command('accessVault <contractAddr> <vaultUrl> <vaultAddr>')
-	.description('creates a vault containing the given data, on a remote vault server controlled by the given contract')
+	.description('accesses a vault on the remote vault server identified by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(contractAddress, vaultUrlStr, remoteAddress, options){
 		vaultCommand("access", vaultUrlStr, contractAddress, remoteAddress, "", options);
@@ -198,7 +198,7 @@ program
 // DELETEVAULT Command
 program
 	.command('deleteVault <contractAddr> <vaultUrl> <vaultAddr>')
-	.description('creates a vault containing the given data, on a remote vault server controlled by the given contract')
+	.description('deletes a vault on the remote vault server identified by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(contractAddress, vaultUrlStr, remoteAddress, options){
 		vaultCommand("delete", vaultUrlStr, contractAddress, remoteAddress, "", options);
