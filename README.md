@@ -22,7 +22,7 @@ Download the recommended version from [nodejs.org](https://nodejs.org/en/) and i
 ### Install Datona
 Open a command prompt then type:
 ```
-npm install datona -g
+npm install datona-cli -g
 ```
 This will install the Datona command line client and all its dependencies.
 
