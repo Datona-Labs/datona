@@ -1,0 +1,37 @@
+{
+  "name": "datona",
+  "version": "0.0.1",
+  "description": "*nix command line interface for datona-lib. Designed for developers to experiment with Smart Data Access",
+  "main": "src/index.js",
+  "bin": {
+    "datona": "src/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Datona Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Datona-Labs/datona-cli.git"
+  },
+  "keywords": [
+    "smart data access",
+    "control of data",
+    "data vault",
+    "gdpr",
+    "data protection",
+    "blockchain",
+    "datona",
+    "datona-lib"
+  ],
+  "bugs": {
+    "url": "https://github.com/Datona-Labs/datona-cli/issues"
+  },
+  "homepage": "https://github.com/Datona-Labs/datona-cli#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "commander": "^4.1.1",
+    "datona-lib": ">=0.0.3"
+  }
+}

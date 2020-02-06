@@ -1,0 +1,7 @@
+{
+    "blockchainURL" : {
+      "scheme": "https",
+      "host": "kovan.infura.io/v3/<YOUR PROJECT ID>",
+      "port": ""
+    }
+}
