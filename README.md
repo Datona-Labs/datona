@@ -117,26 +117,44 @@ Commands:
 
 This example follows the following scenario:
 
+
 **As a Data Owner, receive and accept a Smart Data Access Request:**
-1. Download a Smart Data Access Request from Datona Labs;
-2. Deploy the requested [Duration_SDAC](#Duration_SDAC-Solidity-Code) smart contract to the kovan testnet;
-3. Create a new data vault on the datonavault.com cloud vault server;
-4. Inform Datona Labs that you've accepted the request;
+
+1\. Download a Smart Data Access Request from Datona Labs;
+
+2\. Deploy the requested [Duration_SDAC](#Duration_SDAC-Solidity-Code) smart contract to the kovan testnet;
+
+3\. Create a new data vault on the datonavault.com cloud vault server;
+
+4\. Inform Datona Labs that you've accepted the request;
+
 
 **Explore vault permissions:**
-5. As the Requester, retrieve the data from the vault;
-6. As a different user, try to retrieve the data from the vault;
-7. As the Owner, update the data in the vault;
-8. As the Requester, retrieve the updated data from the vault;
-9. Get information about the Smart Data Access Contract;
+
+5\. As the Requester, retrieve the data from the vault;
+
+6\. As a different user, try to retrieve the data from the vault;
+
+7\. As the Owner, update the data in the vault;
+
+8\. As the Requester, retrieve the updated data from the vault;
+
+9\. Get information about the Smart Data Access Contract;
+
 
 **Terminate the contract and explore permissions:**
-10. As a different user, try to terminate the Smart Data Access Contract
-11. As the Requester, retrieve the data from the vault;
-12. As the Owner, terminate the Smart Data Access Contract
-13. As the Requester, try to retrieve the data from the vault;
-14. As the Owner, try to retrieve the data from the vault;
-15. As the Owner, delete the vault.
+
+10\. As a different user, try to terminate the Smart Data Access Contract
+
+11\. As the Requester, retrieve the data from the vault;
+
+12\. As the Owner, terminate the Smart Data Access Contract
+
+13\. As the Requester, try to retrieve the data from the vault;
+
+14\. As the Owner, try to retrieve the data from the vault;
+
+15\. As the Owner, delete the vault.
 
 
 ### First, let's setup some keys...
