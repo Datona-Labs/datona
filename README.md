@@ -1,14 +1,18 @@
-# Datona CLI (datona)
+# Datona CLI
 
 [![NPM](https://img.shields.io/npm/v/bitcoinjs-lib.svg)](https://www.npmjs.org/package/bitcoinjs-lib)
 
 Datona Command Line Interface.  A node.js wrapper for the [datona-lib](https://github.com/Datona-Labs/datona-lib) library providing developers with command line functions to experiment with the [Datona IO Platform](https://datona.io).  Full documentation for datona-lib can be found [here](https://datona-lib.readthedocs.io/en/latest/index.html).
 
+## New To Smart Data Access?
+
+See [What Is Smart Data Access](https://datona-lib.readthedocs.io/en/latest/what.html), or for more detail read the [technical white paper](http://datonalabs.org/documents/WhitePaper.pdf).
+
 ## Features
-- create and manage a basic wallet of private keys;
-- get [Smart Data Access Requests](https://datona-lib.readthedocs.io/en/latest/types.html#smart-data-access-request-protocol) from public restful APIs and generate [Smart Data Access Responses](https://datona-lib.readthedocs.io/en/latest/types.html#smartdataaccessresponse).
-- deploy and manage Smart Data Access Contracts on the blockchain;
-- create, update, access and delete Data Vaults on local or remote vault servers;
+- create and manage a basic wallet of private keys
+- get [Smart Data Access Requests](https://datona-lib.readthedocs.io/en/latest/types.html#smart-data-access-request-protocol) from public restful APIs and generate [Smart Data Access Responses](https://datona-lib.readthedocs.io/en/latest/types.html#smartdataaccessresponse)
+- deploy and manage Smart Data Access Contracts on the blockchain
+- create, update, access and delete Data Vaults on local or remote vault servers
 
 Datona is built using [datona-lib](https://github.com/datona-labs/datona-lib).
 
@@ -22,7 +26,7 @@ The steps to install are:
 Download the recommended version from [nodejs.org](https://nodejs.org/en/) and install it with the default installation options.
 
 ### Install Datona
-Open a command prompt then type:
+Open a terminal window then type:
 ```
 npm install datona -g
 ```
@@ -32,9 +36,9 @@ This will install the Datona command line client and all its dependencies.
 
 ### Configuration
 
-The datona-lib library must be told how to access the blockchain.  At this time the kovan testnet is supported.  To access you will either need to be running your own kovan node or use a third party account service like [Infura](https://infura.io).
+The datona-lib library must be told how to access the blockchain network.  At this time the kovan testnet is supported.  To access the network you will either need to be running your own kovan node or use a third party account service like [Infura](https://infura.io).
 
-To configure, edit conf.json, e.g.:
+To configure, edit conf.json.  E.g.
 
 ```
 {
@@ -48,16 +52,16 @@ To configure, edit conf.json, e.g.:
 
 ### Create a Private Key
 
-From the command prompt generate a default key or save an existing key.  Keys are placed in the ~/.datona folder...
+From the command prompt generate a default key
 ```
 > datona generateKey
 ```
-or
+or save an existing key. For example:
 ```
 > datona saveKey 4b4d6874407e35f2d123c6e09bf263df227d48ea3924acfdbf47162d0bb55eb3
 ```
 
-This will be the key used to sign blockchain, vault and requester response transactions by default.
+Keys are placed in the ~/.datona folder. This will be the default key used to sign blockchain, vault and Requester response transactions.
 
 ### Fund Your Address
 
@@ -72,19 +76,19 @@ Usage: datona <command> [options] [args]   # Try datona <command> --help
 Commands:
 
   generateKey [options] [name]                                           
-    generates a new private key and stores it in the ~/.datona directory with the optional name.
+    generates a new private key and stores it in the ~/.datona directory with the optional name
 
   saveKey [options] <privateKey> [name]                                  
-    stores the given private key in the ~/.datona directory with the optional name.
+    stores the given private key in the ~/.datona directory with the optional name
 
   getAddress [name]                                                      
-    displays the public address of the key with the given name. If no name is given the default key is used.
+    displays the public address of the key with the given name. If no name is given the default key is used
 
   getRequest [options] <url>                                             
     gets a request from the given http restful api
 
   acceptRequest [options] <file> <contractAddr> <vaultAddr> <vaultUrl>   
-    accepts the given request by sending a Smart Data Access Response to the requester.
+    accepts the given request by sending a Smart Data Access Response to the requester
 
   deployContract [options] <file> <args...>                              
     deploys a contract to the blockchain with the given constru tor args and returns the contract address
@@ -162,9 +166,9 @@ This example follows the following scenario:
 
 ### First, let's setup some keys...
 
-For ease of use later, we will setup named keys for the Owner, Requester and a random different user.  We will also record the vault owner's public address and requester's public address.
+For ease of use later, we will setup named keys for the Owner, Requester and a random different user.  We will also record the vault owner's public address and Requester's public address.
 
-The Owner's identity doesn't matter since the Smart Data Access Request is for anybody, but the Requester's identity must be the signatory of the request.  Normally the owner and requester will be different people but for this example we will pretend to be both.
+The Owner's identity doesn't matter since the Smart Data Access Request is for anybody, but the Requester's identity must be the signatory of the request.  Normally the Owner and Requester will be different people but for this example we will pretend to be both.
 
 ```
 # generate private keys
@@ -186,11 +190,11 @@ The Owner's identity doesn't matter since the Smart Data Access Request is for a
 
 ### Fund the keys
 
-You will need to send some of your KETH from your funded address to the owner, requester and otherUser addresses.  Any Ethereum wallet should be able to do this.
+You will need to send some of your KETH from your funded address to the Owner, Requester and Other User addresses.  Any Ethereum wallet should be able to do this.
 
 ### 1. Download a Smart Data Access Request from Datona Labs
 
-The first command outputs the JSON request and the signatory.  Note, the signatory matches the requester's key above.
+The first command outputs the JSON request and the signatory.  Note, the signatory matches the Requester's key above.
 
 To save copying the JSON request to a file, the second method uses the --raw option to output just the JSON request, and we will redirect it to a file.
 
@@ -203,7 +207,7 @@ signatory: 0x288b32f2653c1d72043d240a7f938a114ab69584
 
 ```
 
-The contract hash in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants the owner to accept and under which the owner's data will be shared. In this case it is the Duration_SDAC smart contract. (The contract source code [can be found below](#duration_sdac-solidity-code)).
+The contract hash in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants the Owner to accept and under which the Owner's data will be shared. In this case it is the Duration_SDAC smart contract. (The contract source code [can be found below](#duration_sdac-solidity-code)).
 
 ### 2. Deploy the requested Duration_SDAC smart contract to the kovan testnet
 
@@ -219,7 +223,7 @@ or
 > contractCode=duration_sdac
 ```
 
-Then we will deploy a new instance of the contract on the blockchain.  The contract's constructor takes two parameters: permittedRequester and contractDuration (in days)
+Then we will deploy a new instance of the contract on the blockchain.  The contract's constructor takes two parameters: permittedRequester and contractDuration (in days).
 
 ```
 > datona deployContract $contractCode $requester 1 --key owner
@@ -235,7 +239,7 @@ Note, you can monitor your blockchain transactions on the [Kovan Block Explorer]
 
 ### 3. Create a new data vault on the datonavault.com cloud vault server
 
-The owner trusts the datonavault.com vault server so has decided to use that server to hold the data securely.
+The Owner trusts the datonavault.com vault server so has decided to use that server to hold the data securely.
 
 First, let's setup some variables to hold the vault url and the vault's public address (used to authenticate transactions).  The vault's address would be publicly advertised and linked to the vault server's identity.
 
@@ -267,7 +271,7 @@ Behind the scenes the vault server received the create request, checked that the
 
 ### 4. Inform Datona Labs that you've accepted the request
 
-Now that the contract has been deployed and the vault created the owner needs to inform the requester of the contract address and where the data is held by sending a Smart Data Access Response.
+Now that the contract has been deployed and the vault created the Owner needs to inform the Requester of the contract address and where the data is held by sending a Smart Data Access Response.
 
 ```
 > datona acceptRequest request $contract $vaultOwner $vaultUrl --key owner
@@ -277,9 +281,9 @@ Now that the contract has been deployed and the vault created the owner needs to
 }
 ```
 
-The request contains the url of the requester's server so datona-lib knows where to send the response.
+The request contains the url of the Requester's server so datona-lib knows where to send the response.
 
-Behind the scenes the requester's server received the Smart Data Access Response, checked that the correct contract was deployed on the blockchain (retrieved it's runtime bytecode from the blockchain and compared it's hash to the one in the original Smart Data Access Request) and checked that the transaction signatory was the owner of the contract.  It then recorded the contract address and vault address & url as a new customer.
+Behind the scenes the Requester's server received the Smart Data Access Response, checked that the correct contract was deployed on the blockchain (retrieved it's runtime bytecode from the blockchain and compared it's hash to the one in the original Smart Data Access Request) and checked that the transaction signatory was the owner of the contract.  It then recorded the contract address and vault address & url as a new customer.
 
 ### 5. As the Requester, retrieve the data from the vault
 
@@ -288,7 +292,7 @@ Behind the scenes the requester's server received the Smart Data Access Response
 Hello World!
 ```
 
-Behind the scenes datona-lib sent a *VaultRequest* transaction to the vault server signed by the requester's private key.  The vault server authenticated the signature in the VaultRequest and called the ``isPermitted`` method of the contract with the signatory recovered from the signature. This returned ``true`` so the vault server sent a *success VaultResponse* back with a copy of the data from the vault.
+Behind the scenes datona-lib sent a *VaultRequest* transaction to the vault server signed by the Requester's private key.  The vault server authenticated the signature in the VaultRequest and called the ``isPermitted`` method of the contract with the signatory recovered from the signature. This returned ``true`` so the vault server sent a *success VaultResponse* back with a copy of the data from the vault.
 
 ### 6. As a different user, try to retrieve the data from the vault
 
@@ -309,7 +313,7 @@ The call to ``isPermitted`` for this user This returned ``false`` so the vault s
 }
 ```
 
-At this time the vault owner is free to update the data in the vault at any time.  In future, update permissions will be controlled by the smart contract too.  This will allow
+At this time the Vault Owner is free to update the data in the vault at any time.  In future, update permissions will be controlled by the smart contract too.  This will allow.
 
 ### 8. As the Requester, retrieve the updated data from the vault
 
@@ -361,7 +365,7 @@ Hi World!
 
 This has terminated the contract on the blockchain. Once terminated the vault server will refuse all access to the vault.  
 
-Note, the vault and its data will still exist until the vault server gets round to deleting it.  When it does this is down to the policy of the vault service but it is likely to be first time someone tries to access the vault or when the server runs a periodic check of the status of all contracts.  The owner can force the vault server to delete the vault straight away by calling the deleteVault command.  We'll do that later.
+Note, the vault and its data will still exist until the vault server gets round to deleting it.  When it does this is down to the policy of the vault service but it is likely to be first time someone tries to access the vault or when the server runs a periodic check of the status of all contracts.  The Owner can force the vault server to delete the vault straight away by calling the deleteVault command.  We'll do that later.
 
 ### 13. As the Requester, try to retrieve the data from the vault
 
