@@ -31,13 +31,13 @@ datona.blockchain.setProvider(CONFIG.blockchainURL);
 
 program
 	.version('0.0.1-alpha')
-	.usage('<command> [options] [args]   # Try datona <command> --help')
+	.usage('<command> [options] [args]   # Try datona <command> --help');
 
 
 // GENERATEKEY Command
 program
 	.command('generateKey [name]')
-	.description('generates a new private key and stores it in the ~/.datona directory with the optional name.')
+	.description('generates a new private key and stores it in the ~/.datona directory with the optional name. Outputs the key\'s public address.')
 	.option('--force', 'overwrites the given key if it exists. Cannot be undone')
 	.action(function(name, options){
 		generateKey(name, options.force);
@@ -70,18 +70,18 @@ program
 	.description('gets a request from the given http restful api')
 	.option('--raw', 'don\'t decode, just output the raw request')
 	.action(function(url, options){
-    axios.get(url)
-      .then(response => {
-				const rawRequest = JSON.stringify(response.data);
-				if (!options.raw) {
-					const key = loadKey(options.key);
-					const request = new datona.comms.SmartDataAccessRequest(rawRequest, key);
-					console.log("request: "+rawRequest);
-					console.log("signatory: "+request.remoteAddress);
-				}
-				else console.log(rawRequest);
-			})
-			.catch( error => { console.error(error.toString()) });
+		axios.get(url)
+		  .then(response => {
+					const rawRequest = JSON.stringify(response.data);
+					if (!options.raw) {
+						const key = loadKey(options.key);
+						const request = new datona.comms.SmartDataAccessRequest(rawRequest, key);
+						console.log("request: "+rawRequest);
+						console.log("signatory: "+request.remoteAddress);
+					}
+					else console.log(rawRequest);
+				})
+				.catch( error => { console.error(error.toString()) });
 	});
 
 
@@ -95,9 +95,9 @@ program
 		assert.isAddress(contractAddress, "Invalid contract address");
 		assert.isAddress(vaultAddress, "Invalid vault address");
 		const signedRequestStr = fs.readFileSync(file).toString();
-    const vaultUrl = toUrl(vaultUrlStr);
+    	const vaultUrl = toUrl(vaultUrlStr);
 		const key = loadKey(options.key);
-    const request = new datona.comms.SmartDataAccessRequest(signedRequestStr, key);
+    	const request = new datona.comms.SmartDataAccessRequest(signedRequestStr, key);
 		request.accept(contractAddress, vaultAddress, vaultUrl)
 		  .then(console.log)
 			.catch( error => { console.error(error.toString()) });
@@ -167,31 +167,44 @@ program
 
 // CREATEVAULT Command
 program
-	.command('createVault <contractAddr> <vaultUrl> <vaultAddr> <data>')
+	.command('createVault <contractAddr> <vaultUrl> <vaultAddr>')
 	.description('creates a vault on the remote vault server controlled by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
-	.action(function(contractAddress, vaultUrlStr, remoteAddress, data, options){
-		vaultCommand("create", vaultUrlStr, contractAddress, remoteAddress, data, options);
+	.action(function(contractAddress, vaultUrlStr, remoteAddress, options){
+		vaultCommand("create", vaultUrlStr, contractAddress, remoteAddress, undefined, options);
 	});
 
 
-// UPDATEVAULT Command
+// WRITEVAULT Command
 program
-	.command('updateVault <contractAddr> <vaultUrl> <vaultAddr> <data>')
-	.description('updates a vault on the remote vault server identified by the given contract')
+	.command('writeVault <contractAddr> <vaultUrl> <vaultAddr> <data>')
+	.description('writes data to a vault on the remote vault server identified by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
+	.option('--file <file>', 'write to this specific file within the vault')
 	.action(function(contractAddress, vaultUrlStr, remoteAddress, data, options){
-		vaultCommand("update", vaultUrlStr, contractAddress, remoteAddress, data, options);
+		vaultCommand("write", vaultUrlStr, contractAddress, remoteAddress, data, options);
 	});
 
 
-// ACCESSVAULT Command
+// APPENDVAULT Command
 program
-	.command('accessVault <contractAddr> <vaultUrl> <vaultAddr>')
+	.command('appendVault <contractAddr> <vaultUrl> <vaultAddr> <data>')
+	.description('appends data to a vault on the remote vault server identified by the given contract')
+	.option('--key <key>', 'use the given key name instead of the default')
+	.option('--file <file>', 'append to this specific file or directory within the vault')
+	.action(function(contractAddress, vaultUrlStr, remoteAddress, data, options){
+		vaultCommand("append", vaultUrlStr, contractAddress, remoteAddress, data, options);
+	});
+
+
+// READVAULT Command
+program
+	.command('readVault <contractAddr> <vaultUrl> <vaultAddr>')
 	.description('accesses a vault on the remote vault server identified by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
+	.option('--file <file>', 'read from this specific file or directory within the vault')
 	.action(function(contractAddress, vaultUrlStr, remoteAddress, options){
-		vaultCommand("access", vaultUrlStr, contractAddress, remoteAddress, "", options);
+		vaultCommand("read", vaultUrlStr, contractAddress, remoteAddress, undefined, options);
 	});
 
 
@@ -201,7 +214,7 @@ program
 	.description('deletes a vault on the remote vault server identified by the given contract')
 	.option('--key <key>', 'use the given key name instead of the default')
 	.action(function(contractAddress, vaultUrlStr, remoteAddress, options){
-		vaultCommand("delete", vaultUrlStr, contractAddress, remoteAddress, "", options);
+		vaultCommand("delete", vaultUrlStr, contractAddress, remoteAddress, undefined, options);
 	});
 
 
@@ -213,6 +226,7 @@ program
 });
 
 
+// PROCESS & RUN COMMAND
 try{
   program.parse(process.argv);
 }
@@ -220,7 +234,7 @@ catch(error) {
   const exception = error instanceof errors.DatonaError ? error : new errors.DatonaError(error.message);
   console.error(exception.toString());
 }
-if( program.args.length == 0 ){ program.outputHelp(); }
+if( process.argv.length < 3 ){ program.outputHelp(); }
 
 
 //-----------------------------------------------------------------------------
@@ -254,7 +268,11 @@ function vaultCommand(command, vaultUrlStr, contractAddress, remoteAddress, data
 	assert.isAddress(remoteAddress, "Invalid remote address");
 	const key = loadKey(options.key);
 	const remoteVault = new datona.vault.RemoteVault(vaultUrl, contractAddress, key, remoteAddress);
-	remoteVault[command](data)
+	function callRemoteVault() {
+		if (data === undefined) return remoteVault[command](options.file);
+		else return remoteVault[command](data, options.file);
+	}
+	callRemoteVault()
 		.then(console.log)
 		.catch( error => { console.error(error.toString()) });
 }
