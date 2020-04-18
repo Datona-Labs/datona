@@ -69,53 +69,52 @@ To use the kovan testnet you will need to use a faucet to fund your address with
 ```
 Usage: datona <command> [options] [args]   # Try datona <command> --help
 
+Options:
+  -V, --version  output the version number
+  -h, --help     output usage information
+  -k, --key      name of the private key to use (see datona generateKey --help)
 
 Commands:
 
-  generateKey [options] [name]                                           
-    generates a new private key and stores it in the ~/.datona directory with the optional name. Outputs the key's public address
+  generateKey [options] [name]
+    generates a new private key and stores it in the ~/.datona directory with the optional name.
 
-  saveKey [options] <privateKey> [name]                                  
-    stores the given private key in the ~/.datona directory with the optional name
+  saveKey [options] <privateKey> [name]
+    stores the given private key in the ~/.datona directory with the optional name.
 
-  getAddress [name]                                                      
-    displays the public address of the key with the given name. If no name is given the default key is used
+  getAddress [name]
+    displays the public address of the key with the given name. If no name is given the default key is used.
 
-  getRequest [options] <url>                                             
+  getRequest [options] <url>
     gets a request from the given http restful api
 
-  acceptRequest [options] <file> <contractAddr> <vaultAddr> <vaultUrl>   
-    accepts the given request by sending a Smart Data Access Response to the requester
+  acceptRequest [options] <file> <contractAddr> <vaultUrl> <vaultAddr>
+    accepts the given request by sending a Smart Data Access Response to the requester.
 
-  deployContract [options] <file> <args...>                              
-    deploys a contract to the blockchain with the given constructor args and returns the contract address
+  deployContract [options] <file> <args...>
+    deploys a contract to the blockchain with the given constructor args
 
-  callContract <file> <contractAddr> <method> [args...]                  
-    calls a specific view or pure method of the given contract at the given address
+  callContract <file> <contractAddr> <method> [args...]
+    calls a specific view or pure method of a contract
 
-  transactContract [options] <file> <contractAddr> <function> [args...]  
-    calls a specific state-modifying method of the given contract at the given address
+  transactContract [options] <file> <contractAddr> <function> [args...]
+    calls a specific state-modifying method of a contract
 
-  terminateContract [options] <file> <contractAddr>                      
-    terminates the given contract at the given address
+  terminateContract [options] <file> <contractAddr>
+    terminates the contract at the given address
 
-  createVault [options] <vaultUrl> <contractAddr> <remoteAddr> <data>    
-    creates a vault containing the given data, on a remote vault server controlled by the given contract
+  createVault [options] <contractAddr> <vaultUrl> <vaultAddr> <data>
+    creates a vault on the remote vault server controlled by the given contract
 
-  updateVault [options] <vaultUrl> <contractAddr> <remoteAddr> <data>    
-    creates a vault containing the given data, on a remote vault server controlled by the given contract
+  updateVault [options] <contractAddr> <vaultUrl> <vaultAddr> <data>
+    updates a vault on the remote vault server identified by the given contract
 
-  accessVault [options] <vaultUrl> <contractAddr> <remoteAddr>           
-    creates a vault containing the given data, on a remote vault server controlled by the given contract
+  accessVault [options] <contractAddr> <vaultUrl> <vaultAddr>
+    accesses a vault on the remote vault server identified by the given contract
 
-  deleteVault [options] <vaultUrl> <contractAddr> <remoteAddr>           
-    creates a vault containing the given data, on a remote vault server controlled by the given contract
+  deleteVault [options] <contractAddr> <vaultUrl> <vaultAddr>
+    deletes a vault on the remote vault server identified by the given contract
 
-Options:
-
-  -h, --help     output usage information
-  -V, --version  output the version number
-  -k, --key      name of the private key to use (see datona generateKey --help)
 ```
 
 ## Example
