@@ -201,7 +201,7 @@ Either:
 Copy the following and paste into a file named ``request``:
 
 ```
-{"txn":{"txnType":"SmartDataAccessRequest","version":"0.0.1","contract":{"hash":"5573012304cc4d87a7a07253c728e08250db6821a3dfdbbbcac9a24f8cd89ad4"},"api":{"url":{"scheme":"file","host":"77.68.75.133","port":8126},"acceptTransaction":{},"rejectTransaction":{}}},"signature":"93f05cbe7fce54df6195bbc1cbb7bc8bb0b11db699fdcfb3c1630d5bcf38ec961a5479534c6fc09537f65b022db36403cad6dac2108a12305c0cfe6a9f9c5a6801"}
+{"txn":{"txnType":"SmartDataAccessRequest","version":"0.0.1","contract":{"hash":"5573012304cc4d87a7a07253c728e08250db6821a3dfdbbbcac9a24f8cd89ad4"},"api":{"url":{"scheme":"file","host":"77.68.75.133","port":8126},"acceptTransaction":{},"rejectTransaction":{}}},"signature":"e0e49d87c386eff24aaa593ee11375c2375d49eaecfb983f920bc90a6bcb684006c6c440fb29fdbc77be9609ac40069f4abbdc5f0cc30b79f5c70083b286581800"}
 ```
 
 or:
@@ -290,7 +290,7 @@ Now that the contract has been deployed and the vault created the Owner needs to
 $ datona acceptRequest request $contract $vaultUrl $vaultServerId --key owner
 {
   txn: { txnType: 'GeneralResponse', responseType: 'success' },
-  signatory: '0x288b32f2653c1d72043d240a7f938a114ab69584'
+  signatory: '0x41a60f71063cd7c9e5247d3e7d551f91f94b5c3b'
 }
 ```
 
