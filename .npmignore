@@ -1,0 +1,8 @@
+node_modules/
+docs/
+.idea
+.nyc_output
+config.json.local
+contracts/compile.sh
+kycTest.sh
+readmeTest.sh
