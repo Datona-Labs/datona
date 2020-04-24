@@ -12,7 +12,7 @@ See [What Is Smart Data Access](https://datona-lib.readthedocs.io/en/latest/what
 - create and manage a basic wallet of private keys
 - get [Smart Data Access Requests](https://datona-lib.readthedocs.io/en/latest/types.html#smart-data-access-request-protocol) from public restful APIs and generate [Smart Data Access Responses](https://datona-lib.readthedocs.io/en/latest/types.html#smartdataaccessresponse)
 - deploy and manage Smart Data Access Contracts on the blockchain
-- create, update, access and delete Data Vaults on local or remote vault servers
+- create, read, write, append and delete Data Vaults on local or remote vault servers
 
 Datona is built using [datona-lib](https://github.com/datona-labs/datona-lib).
 
@@ -130,7 +130,7 @@ See the following two usage examples:
 
   - The simpler [Example 1 - Basic Data Share](Example-Basic.md) stores 'Hello World' in a vault accessible by one requester for one day.  The example will take you through the process of deploying a Smart Data Access Contract, creating a vault, writing to the vault, accepting a smart data access request, reading the data as the requester and later deleting the vault.  
 
-  - The more complex [Example 2 - KYC](Example-KYC.md) demonstrates the data life-cycle for a customer taking out a loan from an organisation.  In the example, a third-party verifier performs the Know Your Customer checks on the customer's data and the financial regulator audits the KYC process.  The customer, organisation and verifier each read and write data to the vault, while the Smart Data Access Contract controls the read, write and append file permissions at each stage of the data life-cycle.
+  - The more complex [Example 2 - KYC](Example-KYC.md) demonstrates the data life-cycle for a customer opening, holding and closing an account with an online trading platform.  In the example, a third-party verifier performs the Know Your Customer checks on the customer's data and the financial regulator audits the KYC process.  The customer, organisation and verifier each read and write data to the vault, while the Smart Data Access Contract controls the read, write and append file permissions at each stage of the data life-cycle.
 
 ## Copyright
 
