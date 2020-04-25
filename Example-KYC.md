@@ -15,11 +15,11 @@ All the account data, including the customer's identity and proof of ID, the ver
 |`0x0000000000000000000000000000000000000005`|directory|The requester's records specific to this account|
 |`0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF`|file|A general purpose log file|
   
-The life-cycle of the account is implemented as a state machine within the Smart Data Access Contract, as seen in the state transition diagram below.  Permission to transition between states is restricted to the appropriate role(s), shown in bold.  In each state, the permissions for each file and each role change to suit the life-cycle.  See the [KYC S-DAC source code](#kyc_sdac-solidity-code) for details of the permissions in each state.
+The life-cycle of the account is implemented as a state machine within the Smart Data Access Contract, as seen in the state transition diagram below.  Permission to transition between states is restricted to the appropriate role(s), shown in bold.  In each state, the permissions for each file and each role change to suit the life-cycle.  See the [KYC S-DAC source code](#KYC-S-DAC-Solidity-Code) for details of the permissions in each state.
 
 Since all states, state transition restrictions and file permissions are defined in an S-DAC on a public blockchain, all actors can be confident that their role, access rights and data protection rights will be upheld and can monitor the account process in real time as it progresses through its life-cycle.
 
-[std]: std
+<a name="std"></a>
 ![KYC S-DAC State Transition Diagram](KYC_SDAC_STD.png)
 
 ## Overview
@@ -147,7 +147,7 @@ $ datona getRequest http://77.68.75.133:8125/0.0.2/kycRequest --raw >request
 
 The ``request`` file will be used later.
 
-The contract hash found in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants the Owner to accept and under which the Owner's data will be shared. In this case it is the KYC_SDAC smart contract. (The contract source code [can be found below](#kyc_sdac-solidity-code)).
+The contract hash found in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants the Owner to accept and under which the Owner's data will be shared. In this case it is the KYC_SDAC smart contract. (The contract source code [can be found below](#KYC-S-DAC-Solidity-Code)).
 
 Let's store the contract hash for later:
 
@@ -258,7 +258,7 @@ Behind the scenes the Requester's server received the Smart Data Access Response
 
 ### 6. As each actor, try to retrieve the Owner's data from the vault
 
-Immediately after deployment, the S-DAC defaults to the *Ready For Verification* state.  In this state only the owner can access his data from the vault.  The permissions for each state are defined by the developer of the S-DAC - see [KYC S-DAC](KYC S-DAC Solidity Code).
+Immediately after deployment, the S-DAC defaults to the *Ready For Verification* state.  In this state only the owner can access his data from the vault.  The permissions for each state are defined by the developer of the S-DAC - see [KYC S-DAC](#KYC-S-DAC-Solidity-Code).
 
 ```
 $ datona readVault $contract $vaultUrl $vaultServerId --file 0x0000000000000000000000000000000000000001 --key owner
@@ -402,7 +402,7 @@ $ datona transactContract $contractCode $contract contractInitiated --key reques
 
 ### 14. Regulator audits the account;
 
-Now that the S-DAC is in the ``Contract Live`` state, the service provided to the Owner by the trading platform is within the legal remit of the financial regulator.  The vault can no longer be terminated without going through a 5-year data retention period (see the [state transition diagram][std] above).  The regulator can audit the account at any time while the account is open or in the retention period.
+Now that the S-DAC is in the ``Contract Live`` state, the service provided to the Owner by the trading platform is within the legal remit of the financial regulator.  The vault can no longer be terminated without going through a 5-year data retention period (see the [state transition diagram](#std) above).  The regulator can audit the account at any time while the account is open or in the retention period.
 
 The Regulator's software has been monitoring the contract and recognises that this account can be audited.  However, to gain access to the data the Regulator must first transact with the S-DAC.  This ensures all parties are aware of the audit.  By monitoring the contract state, all other parties - Owner, Requester and Verifier - can be notified when an audit is started and when it ends.  The Regulator records the results of the audit to the log file.
 
