@@ -33,6 +33,8 @@ This will install the Datona command line client and all its dependencies.
 
 The datona-lib library must be told how to access the blockchain network.  At this time the kovan testnet is supported.  To access the network you will either need to be running your own kovan node or use a third party account service like [Infura](https://infura.io).
 
+*When creating an account in Infura, it will ask you to create a new project.  You will need to copy the 16-byte (32 hex character) Project ID into the datona-cli configuration file below.*
+
 To configure, edit /usr/local/lib/node_modules/datona-cli/config.json
   
 E.g.
@@ -49,20 +51,36 @@ E.g.
 
 ### Create a Private Key
 
-From the command prompt generate a default key
+Datona-cli contains a basic wallet. You can use it to randomly generate Ethereum private keys, which can be used to sign transactions later.
+
+From the command prompt generate a default key.  This will be used by default to sign transactions:
 ```
 $ datona generateKey
 ```
-or save an existing key. For example:
+or you can store a private key you have already generated. For example:
 ```
 $ datona saveKey 4b4d6874407e35f2d123c6e09bf263df227d48ea3924acfdbf47162d0bb55eb3
 ```
 
-Keys are placed in the ~/.datona folder. This will be the default key used to sign blockchain, vault and Requester response transactions.
+Private keys are placed in the ~/.datona folder.  You can only create one default key but you can create other keys by giving them each a unique name, e.g.:
+```
+$ datona generateKey mySecondKey
+$ datona generateKey myThirdKey
+$ datona generateKey myFourthKey
+```
+
+The output from the `generateKey` and `saveKey` commands is the public Ethereum address calculated from the private key.  You can view any of your addresses later with the `getAddress` command, for example:
+```
+$ datona getAddress
+0x263ed87823a4ebfebcbd6ae275404a2ca877afb3
+
+$ datona getAddress mySecondKey
+0x636efe788b64c41a6b1c0f71e7c61abdac6213fd
+```
 
 ### Fund Your Address
 
-To use the kovan testnet you will need to use a faucet to fund your address with some KETH, e.g. https://faucet.kovan.network/.
+To deploy and transact with contracts on the blockchain and to run the examples below, you will need to fund your public Ethereum addresses.  You can use a public faucet like https://faucet.kovan.network/ to send yourself some KETH and a wallet like [MetaMask](https://metamask.io/) or [MyEtherWallet](https://www.myetherwallet.com/) to transfer KETH between all your addresses.
 
 ## Usage
 
