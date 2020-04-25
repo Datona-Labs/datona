@@ -80,7 +80,7 @@ $ datona getAddress mySecondKey
 
 ### Fund Your Address
 
-To deploy and transact with contracts on the blockchain and to run the examples below, you will need to fund your public Ethereum addresses.  You can use a public faucet like https://faucet.kovan.network/ to send yourself some KETH and a wallet like [MetaMask](https://metamask.io/) or [MyEtherWallet](https://www.myetherwallet.com/) to transfer KETH between all your addresses.
+To deploy and transact with contracts on the blockchain and to run the examples below, you will need to fund your public Ethereum addresses.  You can use a public faucet like https://faucet.kovan.network/ to send yourself some KETH.  You can then import your private key (found in `~/.datona`) into a full-featured wallet like [MetaMask](https://metamask.io/) or [MyEtherWallet](https://www.myetherwallet.com/) to transfer some of that KETH to your other addresses. 
 
 ## Usage
 
