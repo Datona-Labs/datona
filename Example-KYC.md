@@ -2,7 +2,25 @@
 
 *Before following this example, make sure you have followed the instructions in [Using Datona for the First Time](#Using-Datona-for-the-First-Time)*
 
-The scenario for this example is of a customer opening an account on an online trading platform, using the platform for 2 years and then closing the account.  The account opening process includes a Know Your Customer (KYC) check performed by a specialist third party organisation.  To meet legal requirements, the KYC process may be audited by the financial regulator any time up to 5 years after the account has been closed.
+The scenario for this example is of a customer opening an account on an online trading platform, using the platform and then closing the account some time later.  The account opening process includes a Know Your Customer (KYC) check performed by a specialist third party organisation.  To meet legal requirements, the KYC process may be audited by the financial regulator any time up to 5 years after the account has been closed.
+
+All the account data, including the customer's identity and proof of ID, the verifier's KYC records and any customer-related records created by the platform are held in a vault and controlled by a Smart Data Access Contract.  Each category of data is allocated its own file within the vault so that its read/write/append permissions can be tailored specifically to that data.  The files are as follows:
+
+|File ID|Type|Content|
+|---|:---:|---|
+|`0x0000000000000000000000000000000000000001`|file|The customer's name and email address|
+|`0x0000000000000000000000000000000000000002`|directory|The customer's KYC identity data (copy of passport and proof of address)|
+|`0x0000000000000000000000000000000000000003`|directory|The verifier's KYC records specific to this case|
+|`0x0000000000000000000000000000000000000004`|file|The verifier's signed conclusion|
+|`0x0000000000000000000000000000000000000005`|directory|The requester's records specific to this account|
+|`0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF`|file|A general purpose log file|
+  
+The life-cycle of the account is implemented as a state machine within the Smart Data Access Contract, as seen in the state transition diagram below.  Permission to transition between states is restricted to the appropriate role(s), shown in bold.  In each state, the permissions for each file and each role change to suit the life-cycle.  See the [KYC S-DAC source code](#kyc_sdac-solidity-code) for details of the permissions in each state.
+
+Since all states, state transition restrictions and file permissions are defined in an S-DAC on a public blockchain, all actors can be confident that their role, access rights and data protection rights will be upheld and can monitor the account process in real time as it progresses through its life-cycle.
+
+[std]: std
+![KYC S-DAC State Transition Diagram](KYC_SDAC_STD.png)
 
 ## Overview
 
@@ -384,7 +402,9 @@ $ datona transactContract $contractCode $contract contractInitiated --key reques
 
 ### 14. Regulator audits the account;
 
-Now that the S-DAC is in the ``Contract Live`` state, the service provided to the Owner by the trading platform is within the legal remit of the financial regulator.  The vault can no longer be terminated without going through a 5-year data retention period.  The regulator can audit the account at any time while it is open.  To gain access to the data the Regulator must first transact with the S-DAC.  By monitoring the contract state, all other parties - Owner, Requester and Verifier - can be notified that an audit has started and completed.
+Now that the S-DAC is in the ``Contract Live`` state, the service provided to the Owner by the trading platform is within the legal remit of the financial regulator.  The vault can no longer be terminated without going through a 5-year data retention period (see the [state transition diagram][std] above).  The regulator can audit the account at any time while the account is open or in the retention period.
+
+The Regulator's software has been monitoring the contract and recognises that this account can be audited.  However, to gain access to the data the Regulator must first transact with the S-DAC.  This ensures all parties are aware of the audit.  By monitoring the contract state, all other parties - Owner, Requester and Verifier - can be notified when an audit is started and when it ends.  The Regulator records the results of the audit to the log file.
 
 ```
 $ datona transactContract $contractCode $contract auditStarted --key regulator
