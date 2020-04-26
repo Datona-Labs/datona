@@ -1,6 +1,6 @@
 # KYC SDA Example
 
-*Before following this example, make sure you have followed the instructions in [Using Datona for the First Time](#Using-Datona-for-the-First-Time)*
+*Before following this example, make sure you have followed the instructions in [Using Datona for the First Time](README.md#Using-Datona-for-the-First-Time)*
 
 The scenario for this example is of a customer opening an account on an online trading platform, using the platform and then closing the account some time later.  The account opening process includes a Know Your Customer (KYC) check performed by a specialist third party organisation.  To meet legal requirements, the KYC process may be audited by the financial regulator any time up to 5 years after the account has been closed.
 

@@ -1,6 +1,6 @@
 # Basic SDA Example
 
-*Before following this example, make sure you have followed the instructions in [Using Datona for the First Time](#Using-Datona-for-the-First-Time)*
+*Before following this example, make sure you have followed the instructions in [Using Datona for the First Time](README.md#Using-Datona-for-the-First-Time)*
 
 ## Overview
 
