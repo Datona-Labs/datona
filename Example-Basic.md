@@ -149,7 +149,7 @@ $ vaultServerId=0x288b32F2653C1d72043d240A7F938a114Ab69584
 Now create the vault.
 
 ```
-$ datona createVault $contract $vaultUrl $writeServerId --key owner
+$ datona createVault $contract $vaultUrl $vaultServerId --key owner
 {
   txn: {
     txnType: 'VaultResponse',
@@ -171,7 +171,7 @@ Behind the scenes the vault server received the create request, checked that the
 
 Now that the vault has been created, the Owner must store the data.  Being a basic example, we will just store the string 'Hello World' in the root vault.  For a more complex file-based example see [Example 2 - KYC](Example-KYC.md).
 ```
-$ datona writeVault $contract $vaultUrl $writeServerId "Hello World" --key owner
+$ datona writeVault $contract $vaultUrl $vaultServerId "Hello World" --key owner
 {
   txn: {
     txnType: 'VaultResponse',
