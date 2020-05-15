@@ -4,17 +4,19 @@
 
 The scenario for this example is of a customer opening an account on an online trading platform, using the platform and then closing the account some time later.  The account opening process includes a Know Your Customer (KYC) check performed by a specialist third party organisation.  To meet legal requirements, the KYC process may be audited by the financial regulator any time up to 5 years after the account has been closed.
 
-All the account data, including the customer's identity and proof of ID, the verifier's KYC records and any customer-related records created by the platform are held in a vault and controlled by a Smart Data Access Contract.  Each category of data is allocated its own file within the vault so that its read/write/append permissions can be tailored specifically to that data.  The files are as follows:
+All the account data, including the customer's identity and proof of ID, the verifier's KYC records and any customer-related records created by the platform are held in a vault and controlled by a Smart Data Access Contract.  Each category of data or individual piece of data is allocated its own file within the vault so that its read/write/append permissions can be tailored specifically to that data (see [File Permissions](https://datona-lib.readthedocs.io/en/latest/howto.html#file-permissions) for details on files and directories).  The files are as follows:
 
 |File ID|Type|Content|
 |---|:---:|---|
 |`0x0000000000000000000000000000000000000001`|file|The customer's name and email address|
 |`0x0000000000000000000000000000000000000002`|directory|The customer's KYC identity data (copy of passport and proof of address)|
 |`0x0000000000000000000000000000000000000003`|directory|The verifier's KYC records specific to this case|
-|`0x0000000000000000000000000000000000000004`|file|The verifier's signed conclusion|
+|`0x0000000000000000000000000000000000000004`|file|The verifier's signed conclusion - held in a separate file to give the requester access to the conclusion but not the full KYC records|
 |`0x0000000000000000000000000000000000000005`|directory|The requester's records specific to this account|
 |`0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF`|file|A general purpose log file|
-  
+
+Each file and directory has an id, which can be any Ethereum-like hash, with or without mixed-case checksum encoding ([EIP55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md)).  *(A hash is used to encourage anonymity on the public blockchain and to support the use of hashed filenames if desired)*.  There is no particular meaning to the addresses in the above table, they are just given as examples.
+
 The life-cycle of the account is implemented as a state machine within the Smart Data Access Contract, as seen in the state transition diagram below.  Permission to transition between states is restricted to the appropriate role(s), shown in bold.  In each state, the permissions for each file and each role change to suit the life-cycle.  See the [KYC S-DAC source code](#KYC-S-DAC-Solidity-Code) for details of the permissions in each state.
 
 Since all states, state transition restrictions and file permissions are defined in an S-DAC on a public blockchain, all actors can be confident that their role, access rights and data protection rights will be upheld and can monitor the account process in real time as it progresses through its life-cycle.
@@ -66,7 +68,7 @@ The scenario starts with the customer clicking a 'Create Account' button on the 
 
 **As the Requester, open and run the account**
 
-13\. The Requester checks the Verifier's KYC Signature then opens the account
+13\. The Requester checks the Verifier's KYC Signature then opens the account;
 
 14\. Regulator audits the account;
 
@@ -84,11 +86,11 @@ The scenario starts with the customer clicking a 'Create Account' button on the 
 
 **Simulate 5 years have gone by and explore permissions:**
 
-19\. As the Owner, try to delete the vault before the retention period has ended.
+19\. As the Owner, try to delete the vault before the retention period has ended;
 
-20\. Simulate 5 years gone by
+20\. Simulate 5 years gone by;
 
-21\. As someone other than the Owner, try to delete the vault.
+21\. As someone other than the Owner, try to delete the vault;
 
 22\. As the Owner, delete the vault.
 
@@ -118,7 +120,11 @@ For ease of use later, we will create named keys for each actor plus a random di
 
 # record public keys
 
+$ owner=`datona getAddress owner`
 $ requester=`datona getAddress requester`
+$ verifier=`datona getAddress verifier`
+$ regulator=`datona getAddress regulator`
+$ otherUser=`datona getAddress otherUser`
 ```
 
 ### Fund the addresses
@@ -127,7 +133,7 @@ You will need to send some of your KETH from your funded address to each of the 
 
 ### 1. Download the Smart Data Access Request from the Requester
 
-A Smart Data Access Request is a JSON formatted string containing the contract to deploy and how to notify the Requester if you've accepted the request.  
+A Smart Data Access Request is a JSON formatted string containing the contract to deploy and how to notify the Requester if you've accepted the request. It is expected that in a real-world application a request would be passed to the owner's app either directly or via a download from a url.  E.g. passed directly via an NFC connection or downloaded from a url provided by a QR code or button on a website. For now we will copy the request string or download from the Requester's server:
 
 Either:
 
@@ -139,17 +145,18 @@ Copy the following and paste into a file named ``request``:
 
 or:
 
-Download from the datonavault.com server at 77.68.75.133:
+Download from the Requester's server *(the requester's server just happens to be the datonavault.com server in this example!)*:
 
 ```
-$ datona getRequest http://77.68.75.133:8125/0.0.2/kycRequest --raw >request
+$ requesterServer=http://77.68.75.133:8125
+$ datona getRequest $requesterServer/0.0.2/kycRequest --raw >request
 ```
 
 The ``request`` file will be used later.
 
 The contract hash found in the request identifies the Smart Data Access Contract to be deployed (hash of its runtime bytecode). The contract is the terms and conditions that the Requester wants the Owner to accept and under which the Owner's data will be shared. In this case it is the KYC_SDAC smart contract. (The contract source code [can be found below](#KYC-S-DAC-Solidity-Code)).
 
-Let's store the contract hash for later:
+Let's copy the contract hash from the request and store it for later:
 
 ```
 $ contractHash=3ce36c97d91d3beea9e2b132009bb038ace6a8b901e6fbdf680f74665f3cc8a8
@@ -157,19 +164,16 @@ $ contractHash=3ce36c97d91d3beea9e2b132009bb038ace6a8b901e6fbdf680f74665f3cc8a8
 
 ### 2. Deploy the requested smart contract to the kovan testnet
 
-First we need the contract ABI and bytecode. This can be found in datona-cli's ``contracts`` directory or can be downloaded from datonavault.com at 77.68.75.133.  Either way, let's create a variable pointing to it to make it easier later.  E.g.
+First we need the contract ABI and bytecode. This can be downloaded from the Requester's server at 77.68.75.133.  Let's create a variable pointing to it to make it easier later.  E.g.
 
 ```
-$ contractCode=/usr/local/lib/node_modules/datona-cli/contracts/$contractHash
-```
-or
-```
-$ curl http://77.68.75.133:8125/0.0.2/contract/$contractHash > kyc_sdac
+$ requesterServer=http://77.68.75.133:8125
+$ curl $requesterServer/0.0.2/contract/$contractHash > kyc_sdac
 
 $ contractCode=kyc_sdac
 ```
 
-Then we will deploy a new instance of the contract on the blockchain.  The contract's constructor takes two parameters: permittedRequester and contractDuration (in days).
+Then we will deploy a new instance of the contract on the blockchain.  The contract's constructor takes four parameters: the Ethereum addresses of the Requester, Verifier and Regulator, and the duration of the retention period (in days).
 
 ```
 $ datona deployContract $contractCode $requester $verifier $regulator 1826 --key owner
@@ -181,7 +185,9 @@ Copy the output from the deployContract command into an environment variable cal
 $ contract=0x073C8e6121eF67096c7925f7f9b2C66e3d240a74
 ```
 
-Note, you can monitor your blockchain transactions on the [Kovan Block Explorer](https://kovan.etherscan.io/).
+*Note, the `--key` option instructs datona-cli to use the private key of that name to sign the transaction.*
+
+*Note also, you can monitor your blockchain transactions on the [Kovan Block Explorer](https://kovan.etherscan.io/).  Try entering the contract address and tracing your transactions back through your Ethereum address to the kovan faucet.*
 
 ### 3. Create a new data vault on the datonavault.com cloud vault server
 
@@ -213,7 +219,7 @@ $ datona createVault $contract $vaultUrl $vaultServerId --key owner
 
 Note the signatory matches the vaultServerId above, in fact datona-lib has validated that as part of the transaction process.  If the signatory was wrong, an exception would have been thrown.
 
-Behind the scenes the vault server received the create request, checked that the contract is on the blockchain and is owned by the transaction signatory then created a new empty vault.  The *VaultResponse* transaction returned was displayed as the output from the ``datona createVault`` command.
+Behind the scenes the vault server received the create request, checked that the contract is on the blockchain and is owned by the transaction signatory then created a new empty vault.
 
 ### 4. Write the data to the vault
 
@@ -243,6 +249,8 @@ $ datona writeVault $contract $vaultUrl $vaultServerId "Pretend Proof of Address
 ### 5. Inform the trading platform that you've accepted the request
 
 Now that the contract has been deployed and the vault created, the Owner needs to inform the Requester of the contract address and where the data is held by sending a Smart Data Access Response.
+
+*Note, this step is not strictly required.  The Requester can use datona-lib's `subscribe` function to monitor the blockchain for new contracts that match the runtime bytecode in the request.  The Verifier and Regulator can also do this.*
 
 ```
 $ datona acceptRequest request $contract $vaultUrl $vaultServerId --key owner
@@ -274,7 +282,7 @@ $ datona readVault $contract $vaultUrl $vaultServerId --file 0x00000000000000000
 PermissionError - permission denied
 ```
 
-Behind the scenes of datona-lib sent a *VaultRequest* transaction to the vault server signed by the user's private key.  The vault server authenticated the signature in the VaultRequest and called the ``getPermissions`` method of the contract, passing it the requested file ID and the signatory recovered from the signature. Based on the read-bit within permissions byte returned from ``getPermissions``, the vault server returned either a success or error *VaultResponse*.
+Behind the scenes, datona-lib sent a *VaultRequest* transaction to the vault server signed by the user's private key.  The vault server's datona-lib [VaultKeeper](https://datona-lib.readthedocs.io/en/latest/howto.html#creating-a-data-vault-server) authenticated the signature in the VaultRequest and called the ``getPermissions`` method of the contract, passing it the requested file ID and the signatory recovered from the request's cryptographic signature. Based on the read-bit within the permissions byte returned from ``getPermissions``, the vault server returned either a success or error *VaultResponse*.
 
 ### 7. As any user, get information about the Smart Data Access Contract
 
@@ -304,7 +312,7 @@ $ datona callContract $contractCode $contract getPermissions $verifier 0x0000000
 
 ### 8. As the Verifier, transition the contract to begin verification and see how permissions have changed
 
-The S-DAC is designed to only allow the Verifier access to the Owner's data when in the *Verifying* state.  By forcing the verifier to transition the contract, it creates a blockchain event that can be monitored for and used to inform the Owner and Requester that verification process has begun.
+The S-DAC is designed to only allow the Verifier access to the Owner's data when in the *Verifying* state.  By forcing the verifier to transition the contract, it creates a blockchain event that can be monitored for and used to inform the Owner and Requester that the verification process has begun.
 
 In this case the Verifier also writes an event to the vault's log file at address ``0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF``.
 
@@ -312,13 +320,14 @@ In this case the Verifier also writes an event to the vault's log file at addres
 $ datona transactContract $contractCode $contract verificationStarted --key verifier
 
 $ datona appendVault $contract $vaultUrl $vaultServerId "Verification Started\n" --file 0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF --key verifier
-
+```
+Lets see how the permissions to access the Owner's data have changed for the Verifier now that the contract is in the `Verifying` state:
+```
 $ datona callContract $contractCode $contract getPermissions $verifier 0x0000000000000000000000000000000000000001
 0x04
 $ datona callContract $contractCode $contract getPermissions $verifier 0x0000000000000000000000000000000000000002
 0x84
 ```
-
 
 ### 9. As the Verifier, retrieve the data from the vault
 
@@ -344,7 +353,7 @@ Pretend Proof of Address
 
 In this scenario the Verifier finds that the Owner's proof of address is out of date and makes a log entry.  The email address retrieved from file 1 is used to contact the owner and request the updated data.  The owner adds a recent proof of address to the vault and the Verifier reads it.
 
-*Note, in future versions of the Datona Protocol, communication between actors may be handled by the vault and controlled by the S-DAC.  This is known as Secure Messaging.*
+*Note, in future versions of the Datona Protocol, communication between actors may optionally be handled by the vault and controlled by the S-DAC.  This is known as Secure Messaging.*
 
 ```
 $ datona appendVault $contract $vaultUrl $vaultServerId "Requested more recent proof of address\n" --file 0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF --key verifier
@@ -400,7 +409,7 @@ $ datona transactContract $contractCode $contract contractInitiated --key reques
 ```
 
 
-### 14. Regulator audits the account;
+### 14. Regulator audits the account
 
 Now that the S-DAC is in the ``Contract Live`` state, the service provided to the Owner by the trading platform is within the legal remit of the financial regulator.  The vault can no longer be terminated without going through a 5-year data retention period (see the [state transition diagram](#std) above).  The regulator can audit the account at any time while the account is open or in the retention period.
 
@@ -498,7 +507,7 @@ $ datona transactContract $contractCode $contract auditCompleted --key regulator
 ```
 
 
-### 19. As the Owner, try to delete the vault before the retention period has ended.
+### 19. As the Owner, try to delete the vault before the retention period has ended
 
 ```
 $ datona deleteVault $contract $vaultUrl $vaultServerId --key owner
@@ -515,7 +524,7 @@ $ datona transactContract $contractCode $contract testPoint__simulateTimeElapsed
 ```
 
 
-### 21. As someone other than the Owner, try to delete the vault.
+### 21. As someone other than the Owner, try to delete the vault
 
 ```
 $ datona deleteVault $contract $vaultUrl $vaultServerId --key otherUser
@@ -630,8 +639,9 @@ contract KycSDAC is SDAC {
     
     
     // NB: in Solidity multi-dimensional array indices are reversed compared to other languages
-    byte[Actors__length][Files__length][States__length-1] filePermissions = [   
+    byte[Actors__length][Files__length][States__length-1] filePermissions = [
             // READY_FOR_VERIFICATION
+                //  OWNER          REQUESTER        VERIFIER        REGULATOR
 			[ [ PERMISSIONS_RWA, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
 			  [ PERMISSIONS_RWA, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
 			  [ NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
@@ -640,6 +650,7 @@ contract KycSDAC is SDAC {
 			  [ PERMISSIONS_RA, PERMISSIONS_R, PERMISSIONS_R, NO_PERMISSIONS ] ],
 
             // VERIFYING
+                //  OWNER          REQUESTER        VERIFIER        REGULATOR
 			[ [ PERMISSIONS_RA, NO_PERMISSIONS, PERMISSIONS_R, NO_PERMISSIONS ],
 			  [ PERMISSIONS_RA, NO_PERMISSIONS, PERMISSIONS_R, NO_PERMISSIONS ],
 			  [ NO_PERMISSIONS, NO_PERMISSIONS, PERMISSIONS_RWA, NO_PERMISSIONS ],
@@ -648,6 +659,7 @@ contract KycSDAC is SDAC {
 			  [ PERMISSIONS_RA, PERMISSIONS_R, PERMISSIONS_RA, NO_PERMISSIONS ] ],
 
             // VERIFICATION_FAILED
+                //  OWNER          REQUESTER        VERIFIER        REGULATOR
 			[ [ PERMISSIONS_RA, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
 			  [ PERMISSIONS_RA, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
 			  [ NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
@@ -656,6 +668,7 @@ contract KycSDAC is SDAC {
 			  [ PERMISSIONS_RA, PERMISSIONS_R, NO_PERMISSIONS, NO_PERMISSIONS ] ],
 
             // VERIFIED_OK
+                //  OWNER          REQUESTER       VERIFIER        REGULATOR
 			[ [ PERMISSIONS_RA, PERMISSIONS_R, NO_PERMISSIONS, NO_PERMISSIONS ],
 			  [ PERMISSIONS_RA, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
 			  [ NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS ],
@@ -664,6 +677,7 @@ contract KycSDAC is SDAC {
 			  [ PERMISSIONS_RA, PERMISSIONS_RA, PERMISSIONS_RA, NO_PERMISSIONS ] ],
 
             // CONTRACT_LIVE
+                //  OWNER         REQUESTER       VERIFIER        REGULATOR
 			[ [ PERMISSIONS_RA, PERMISSIONS_R, NO_PERMISSIONS, PERMISSIONS_R ],
 			  [ PERMISSIONS_RA, NO_PERMISSIONS, NO_PERMISSIONS, PERMISSIONS_R ],
 			  [ NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS, PERMISSIONS_R ],
@@ -672,6 +686,7 @@ contract KycSDAC is SDAC {
 			  [ PERMISSIONS_RA, PERMISSIONS_RA, NO_PERMISSIONS, PERMISSIONS_RA ] ],
 
             // ARCHIVED
+                //  OWNER          REQUESTER       VERIFIER       REGULATOR
 			[ [ PERMISSIONS_RA, NO_PERMISSIONS, NO_PERMISSIONS, PERMISSIONS_R ],
 			  [ PERMISSIONS_RA, NO_PERMISSIONS, NO_PERMISSIONS, PERMISSIONS_R ],
 			  [ NO_PERMISSIONS, NO_PERMISSIONS, NO_PERMISSIONS, PERMISSIONS_R ],

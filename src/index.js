@@ -30,7 +30,7 @@ datona.blockchain.setProvider(CONFIG.blockchainURL);
 // MAIN
 
 program
-	.version('0.0.1-alpha')
+	.version('0.1.0-alpha')
 	.usage('<command> [options] [args]   # Try datona <command> --help');
 
 
@@ -241,7 +241,7 @@ if( process.argv.length < 3 ){ program.outputHelp(); }
 
 function generateKey(keyName = defaultKeyName, overwrite = false, useKey) {
   assert.isString(keyName, "Invalid key name - expecting String.\nUsage: generateKey [keyName]");
-	if (useKey != undefined) assert.isPrivateKey(useKey, "privateKey");
+	if (useKey !== undefined) assert.isPrivateKey(useKey, "privateKey");
   const key = useKey ? new datona.crypto.Key(useKey) : datona.crypto.generateKey();
 
   try {
@@ -281,7 +281,7 @@ function vaultCommand(command, vaultUrlStr, contractAddress, remoteAddress, data
 //-----------------------------------------------------------------------------
 
 function loadKey(keyName) {
-  if (keyName == undefined) keyName = defaultKeyName;
+  if (keyName === undefined) keyName = defaultKeyName;
   if( !fs.existsSync(keyPath+"/"+keyName) ) throw new errors.DatonaError("Key does not exist");
   try {
 		const privateKey = fs.readFileSync(keyPath+"/"+keyName).toString();
@@ -312,7 +312,7 @@ function loadContract(file) {
 
 function toUrl(str) {
   var parts = str.split(':');
-  if (parts.length != 3) { throw new errors.DatonaError("Invalid url: "+str+".  Expecting the form scheme://host:port"); }
+  if (parts.length !== 3) { throw new errors.DatonaError("Invalid url: "+str+".  Expecting the form scheme://host:port"); }
 	try{
 		return {
 	    scheme: parts[0],
