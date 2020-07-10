@@ -281,7 +281,7 @@ function vaultCommand(command, vaultUrlStr, contractAddress, remoteAddress, data
 //-----------------------------------------------------------------------------
 
 function loadKey(keyName) {
-  if (keyName === undefined) keyName = defaultKeyName;
+  if (keyName === undefined) keyName = process.env.DATONA_KEY || defaultKeyName;
   if( !fs.existsSync(keyPath+"/"+keyName) ) throw new errors.DatonaError("Key does not exist");
   try {
 		const privateKey = fs.readFileSync(keyPath+"/"+keyName).toString();
