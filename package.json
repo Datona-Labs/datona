@@ -1,6 +1,6 @@
 {
   "name": "datona-cli",
-  "version": "0.0.8",
+  "version": "0.1.1-alpha",
   "description": "*nix command line interface for datona-lib. Designed for developers to experiment with Smart Data Access",
   "main": "./src/index.js",
   "bin": {

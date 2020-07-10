@@ -30,7 +30,7 @@ datona.blockchain.setProvider(CONFIG.blockchainURL);
 // MAIN
 
 program
-	.version('0.1.0-alpha')
+	.version('0.1.1-alpha')
 	.usage('<command> [options] [args]   # Try datona <command> --help');
 
 
