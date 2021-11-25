@@ -31,7 +31,7 @@ This will install the Datona command line client and all its dependencies.
 
 ### Configuration
 
-The datona-lib library must be told how to access the blockchain network.  At this time the kovan testnet is supported.  To access the network you will either need to be running your own kovan node or use a third party account service like [Infura](https://infura.io).
+The datona-lib library must be told how to access the blockchain network.  At this time the ropsten testnet is supported.  To access the network you will either need to be running your own ropsten node or use a third party account service like [Infura](https://infura.io).
 
 *When creating an account in Infura, it will ask you to create a new project.  You will need to copy the 16-byte (32 hex character) Project ID into the datona-cli configuration file below.*
 
@@ -43,7 +43,7 @@ E.g.
 {
     "blockchainURL" : {
       "scheme": "https",
-      "host": "kovan.infura.io/v3/<YOUR PROJECT ID>",
+      "host": "ropsten.infura.io/v3/<YOUR PROJECT ID>",
       "port": ""
     }
 }
@@ -80,7 +80,7 @@ $ datona getAddress mySecondKey
 
 ### Fund Your Address
 
-To deploy and transact with contracts on the blockchain and to run the examples below, you will need to fund your public Ethereum addresses.  You can use a public faucet like https://faucet.kovan.network/ to send yourself some KETH.  You can then import your private key (found in `~/.datona`) into a full-featured wallet like [MetaMask](https://metamask.io/) or [MyEtherWallet](https://www.myetherwallet.com/) to transfer some of that KETH to your other addresses. 
+To deploy and transact with contracts on the blockchain and to run the examples below, you will need to fund your public Ethereum addresses.  You can use a public faucet like https://faucet.ropsten.network/ to send yourself some Ropsten ETH.  You can then import your private key (found in `~/.datona`) into a full-featured wallet like [MetaMask](https://metamask.io/) or [MyEtherWallet](https://www.myetherwallet.com/) to transfer some of that Ropsten ETH to your other addresses. 
 
 ## Usage
 
