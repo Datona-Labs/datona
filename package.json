@@ -39,6 +39,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "commander": "^4.1.1",
-    "datona-lib": "0.0.5"
+    "datona-lib": "0.1.4",
+    "ethereumjs-tx": "^2.1.2"
   }
 }
